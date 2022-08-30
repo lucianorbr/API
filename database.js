@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
-const URI = 
-'mongodb+srv://gobarber_admin:KeH3yQIQKCmt0Isy@cluster0.8f3vz.gcp.mongodb.net/?retryWrites=true&w=majority'
 
-mongoose.set('useNewUrlParser', true);
-mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
-mongoose.set('useUnifiedTopology', true);
+global.db = mongoose.connect(
+  'mongodb+srv://admin:7k81PfYwj73TS5aY@clusterdev.cf6wx1h.mongodb.net/test'
+  );
 
-
-
-mongoose
-  .connect(URI)
-  .then(() => console.log('DB in Up'))
-  .catch(() => console.log(err))
+mongoose.connection.on('connected', function () {
+ console.log('=====Conexão estabelecida com sucesso=====');
+});
+mongoose.connection.on('error', function (err) {
+ console.log('=====Ocorreu um erro: ' + err);
+});
+mongoose.connection.on('disconnected', function () {
+ console.log('=====Conexão finalizada=====');
+}); 
