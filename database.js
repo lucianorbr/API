@@ -1,15 +1,33 @@
-const mongoose = require('mongoose');
+const { MongoClient } = require('mongodb');
 
-global.db = mongoose.connect(
-  'mongodb+srv://admin:7k81PfYwj73TS5aY@clusterdev.cf6wx1h.mongodb.net/test'
-  );
+class MyConnect extends MongoClient {
 
-mongoose.connection.on('connected', function () {
- console.log('=====Conexão estabelecida com sucesso=====');
-});
-mongoose.connection.on('error', function (err) {
- console.log('=====Ocorreu um erro: ' + err);
-});
-mongoose.connection.on('disconnected', function () {
- console.log('=====Conexão finalizada=====');
-}); 
+  constructor(url, options) {
+    super(url, options);
+    this.client = null;
+
+    this.on('insert-value', this.insertValue)
+  }
+
+async insertValue(data) {
+    try {
+       this.client = await this.connect()
+
+       const collection = this.client.db('testando').collection('olhaai');
+       const response = await collection.insertOne(data);
+
+       console.log(response);
+       this.client.close();
+     } catch (error) {
+        console.log(error);
+     }
+  }
+}
+
+(new MyConnect(
+  'mongodb+srv://admin:jWa7sIsO0e1OLJP3@clusterdev.cf6wx1h.mongodb.net/test', 
+    { 
+        useNewUrlParser: true, 
+        useUnifiedTopology: true 
+    })
+).emit('insert-value', { ola: 'fion', tudo: 'bom'});
